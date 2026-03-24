@@ -1,8 +1,9 @@
 // AdForge AI - Generate Ads Function
 // BerkahKarya Ads Framework
 
-const LAOZHANG_API_KEY = 'sk-laozhang-xxxxxxxx'; // TODO: Replace with real key
-const LAOZHANG_API_URL = 'https://api.laozhang.ai/v1/chat/completions';
+// Use OmniRoute API (OpenAI-compatible)
+const OMNIROUTE_API_URL = 'http://localhost:20128/v1/chat/completions';
+const OMNIROUTE_MODEL = 'auto/pro-fast'; // or auto/pro-coding
 
 // BerkahKarya Ads Framework - 4 Content Models
 const CONTENT_MODELS = {
@@ -156,15 +157,14 @@ TONE: ${tone || 'santai'}
 
 Generate 4 iklan (1 per model) dengan angle berbeda 180°. Output dalam format JSON sesuai struktur yang sudah ditentukan.`;
 
-    // Call LaoZhang API
-    const response = await fetch(LAOZHANG_API_URL, {
+    // Call OmniRoute API (no auth needed for localhost)
+    const response = await fetch(OMNIROUTE_API_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${LAOZHANG_API_KEY}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-opus-4',
+        model: OMNIROUTE_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: userPrompt }
@@ -175,7 +175,7 @@ Generate 4 iklan (1 per model) dengan angle berbeda 180°. Output dalam format J
     });
 
     if (!response.ok) {
-      throw new Error(`LaoZhang API error: ${response.status}`);
+      throw new Error(`OmniRoute API error: ${response.status}`);
     }
 
     const data = await response.json();
