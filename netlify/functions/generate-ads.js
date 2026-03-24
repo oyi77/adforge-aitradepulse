@@ -2,7 +2,7 @@
 // BerkahKarya Ads Framework
 
 // Use OmniRoute API (OpenAI-compatible)
-const OMNIROUTE_API_URL = 'http://localhost:20128/v1/chat/completions';
+const OMNIROUTE_API_URL = 'http://ai.aitradepulse.com/v1/chat/completions';
 const OMNIROUTE_MODEL = 'auto/pro-fast'; // or auto/pro-coding
 
 // BerkahKarya Ads Framework - 4 Content Models

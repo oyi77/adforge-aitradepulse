@@ -6,7 +6,15 @@
   "scripts": {
     "build": "echo 'No build needed'"
   },
-  "keywords": ["ads", "marketing", "ai"],
+  "keywords": [
+    "ads",
+    "marketing",
+    "ai"
+  ],
   "author": "BerkahKarya",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
 }
