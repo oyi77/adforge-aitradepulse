@@ -39,23 +39,31 @@ SCENE 6: CTA (55-60s)
 - Risk reversal
 - Emotion: action/excitement
 
-EACH SCENE OUTPUT:
+CRITICAL: Output MUST be valid JSON only. No markdown, no explanations, no extra text.
+
+OUTPUT FORMAT (strict JSON):
 {
-  "scene_num": 1,
-  "name": "HOOK",
-  "duration": "0-3s",
-  "voiceover": "exact script for dubbing",
-  "visual": "specific visual direction",
-  "text_overlay": "max 4 words on screen",
-  "emotion_trigger": "curiosity"
+  "scenes": [
+    {
+      "scene_num": 1,
+      "name": "HOOK",
+      "duration": "0-3s",
+      "voiceover": "exact script for dubbing",
+      "visual": "specific visual direction",
+      "text_overlay": "max 4 words on screen",
+      "emotion_trigger": "curiosity"
+    }
+  ],
+  "full_script": "all scenes voiceover combined",
+  "production_notes": "camera angles, transitions, music cues",
+  "canva_json": {
+    "template": "video template name",
+    "duration": "60s",
+    "scenes": 6
+  }
 }
 
-ALSO INCLUDE:
-- full_script: all scenes combined for dubbing
-- production_notes: camera angles, transitions, music cues
-- canva_json: video editing template
-
-OUTPUT: Complete VSL script ready for production.`;
+IMPORTANT: Return ONLY the JSON object. No markdown code blocks, no explanations.`;
 
 async function generateVSL(body) {
   const { produk, target, keunggulan, tone } = body;
@@ -92,25 +100,44 @@ Output dalam format JSON.`;
   const data = await response.json();
   const content = data.choices[0].message.content;
 
-  // Parse JSON from response
+  // Parse JSON from response - improved parsing
   let vslData;
   try {
-    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
-    if (jsonMatch) {
-      vslData = JSON.parse(jsonMatch[1]);
-    } else {
-      vslData = JSON.parse(content);
-    }
-  } catch (parseError) {
-    console.error('JSON parse error:', parseError);
-    return {
-      vsl: {
-        scenes: [],
-        full_script: content,
-        production_notes: 'Parse error - raw content returned',
-        canva_json: {}
+    // Try direct parse first
+    vslData = JSON.parse(content);
+  } catch (e1) {
+    try {
+      // Try extracting from markdown code blocks
+      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        vslData = JSON.parse(jsonMatch[1]);
+      } else {
+        // Try to find JSON object in text
+        const jsonStart = content.indexOf('{');
+        const jsonEnd = content.lastIndexOf('}');
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+          vslData = JSON.parse(content.substring(jsonStart, jsonEnd + 1));
+        } else {
+          throw new Error('No valid JSON found');
+        }
       }
-    };
+    } catch (e2) {
+      console.error('JSON parse error:', e2);
+      // Return structured fallback
+      return {
+        vsl: {
+          scenes: [],
+          full_script: content,
+          production_notes: 'Parse error - raw content returned. Please check format.',
+          canva_json: {}
+        }
+      };
+    }
+  }
+
+  // Ensure vslData has correct structure
+  if (!vslData.scenes) {
+    vslData = { scenes: [], full_script: '', production_notes: '', canva_json: {}, ...vslData };
   }
 
   return { vsl: vslData };
