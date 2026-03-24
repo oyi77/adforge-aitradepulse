@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // OmniRoute API endpoint
-const OMNIROUTE_API_URL = 'http://ai.aitradepulse.com/v1/chat/completions';
+const OMNIROUTE_API_URL = 'https://ai.aitradepulse.com/v1/chat/completions';
 const OMNIROUTE_MODEL = 'auto/pro-fast';
 
 // System Prompt for BerkahKarya Ads Framework
