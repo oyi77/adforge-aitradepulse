@@ -10,6 +10,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Import tool generators
+const { generateLandingPage } = require('./netlify/functions/generate-landing');
+const { generateVSL } = require('./netlify/functions/generate-vsl');
+const { generateBrief } = require('./netlify/functions/generate-brief');
+const { generatePainMap } = require('./netlify/functions/generate-painmap');
+const { generateHookTest } = require('./netlify/functions/generate-hooktest');
+
 // OmniRoute API endpoint
 const OMNIROUTE_API_URL = 'https://ai.aitradepulse.com/v1/chat/completions';
 const OMNIROUTE_MODEL = 'auto/pro-fast';
@@ -211,4 +218,59 @@ app.listen(PORT, () => {
   console.log(`✅ AdForge AI server running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🎯 API endpoint: http://localhost:${PORT}/api/generate-ads`);
+});
+
+// Tool 2: Landing Page
+app.post('/api/generate-landing', async (req, res) => {
+  try {
+    const result = await generateLandingPage(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// Tool 3: VSL Script
+app.post('/api/generate-vsl', async (req, res) => {
+  try {
+    const result = await generateVSL(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// Tool 4: Creative Brief
+app.post('/api/generate-brief', async (req, res) => {
+  try {
+    const result = await generateBrief(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// Tool 5: Pain Map
+app.post('/api/generate-painmap', async (req, res) => {
+  try {
+    const result = await generatePainMap(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+});
+
+// Tool 6: Hook Test
+app.post('/api/generate-hooktest', async (req, res) => {
+  try {
+    const result = await generateHookTest(req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
 });
